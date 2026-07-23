@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 
+# Carregar a planilha CSV
 df = pd.read_csv(
     "secretarios_cosems_pb.csv",
     sep=";", 
@@ -9,16 +10,23 @@ df = pd.read_csv(
     header=0   # garante que a primeira linha seja usada como cabeçalho
 )
 
-# Normalizar nomes das colunas
+# Normalizar nomes das colunas (remove espaços e caracteres invisíveis)
 df.columns = df.columns.str.strip()
+df.columns = df.columns.str.replace("﻿", "")  # remove BOM invisível, se existir
 
 st.title("Consulta Secretários de Saúde - Paraíba")
 
+# Entrada do município
 municipio = st.text_input("Digite o município:")
 
 if municipio:
-    if "Município" in df.columns:
-        resultado = df[df["Município"].str.lower() == municipio.lower()]
+    # Localiza automaticamente a coluna que contém "municipio"
+    col_municipio = [c for c in df.columns if "municipio" in c.lower()]
+    
+    if col_municipio:
+        col_municipio = col_municipio[0]
+        # Busca case-insensitive
+        resultado = df[df[col_municipio].str.lower() == municipio.lower()]
         
         if not resultado.empty:
             cir = resultado.iloc[0].get("CIR", "")
@@ -41,3 +49,7 @@ if municipio:
             st.warning("Município não encontrado na base de dados.")
     else:
         st.error("A coluna 'Município' não foi encontrada na planilha.")
+
+# Debug opcional: mostrar colunas carregadas
+# st.write(df.columns.tolist())
+
