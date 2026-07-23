@@ -1,9 +1,16 @@
 import streamlit as st
-import pandas as pd
-
 # Carregar a planilha (certifique-se que o nome está correto e sem acento)
 
 dimport pandas as pd
+import pandas as pd
+
+df = pd.read_csv(
+    "secretarios_cosems_pb.csv",
+    sep=";",            # separador usado pelo Excel em português
+    encoding="latin1",  # garante leitura de acentos
+    on_bad_lines="skip" # ignora linhas inválidas
+)
+
 
 df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding="latin1", on_bad_lines="skip")
 
