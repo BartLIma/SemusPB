@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Carregar a planilha do COSEMS-PB
-df = pd.read_excel("secretarios_cosems_pb.xlsx")
+df = pd.read_excel("secretários_cosems_pb.xlsx")
 
 st.title("Consulta Secretários de Saúde - Paraíba")
 
