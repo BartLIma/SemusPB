@@ -16,31 +16,30 @@ df.columns = df.columns.str.replace("﻿", "")  # remove BOM invisível
 
 st.title("Consulta Secretários de Saúde - Paraíba")
 
-municipio = st.text_input("Digite o município:")
+# Criar lista de municípios únicos
+municipios = sorted(df["Municipio"].dropna().unique())
+
+# Selectbox para escolher município
+municipio = st.selectbox("Selecione o município:", municipios)
 
 if municipio:
-    col_municipio = [c for c in df.columns if "municipio" in c.lower()]
+    # Busca case-insensitive e tolerante a espaços
+    resultado = df[df["Municipio"].str.lower().str.strip() == municipio.lower().strip()]
     
-    if col_municipio:
-        col_municipio = col_municipio[0]
-        resultado = df[df[col_municipio].str.lower() == municipio.lower()]
+    if not resultado.empty:
+        secretario = resultado.iloc[0].get("Secretario", "")
+        email = resultado.iloc[0].get("Email", "")
+        email_inst = resultado.iloc[0].get("Email Institucional", "")
+        telefone = resultado.iloc[0].get("Telefone", "")
+        telefone_inst = resultado.iloc[0].get("Telefone Institucional", "")
+        endereco = resultado.iloc[0].get("Endereço da SEMUS", "")
         
-        if not resultado.empty:
-            secretario = resultado.iloc[0].get("Secretario", "")
-            email = resultado.iloc[0].get("Email", "")
-            email_inst = resultado.iloc[0].get("Email Institucional", "")
-            telefone = resultado.iloc[0].get("Telefone", "")
-            telefone_inst = resultado.iloc[0].get("Telefone Institucional", "")
-            endereco = resultado.iloc[0].get("Endereço da SEMUS", "")
-            
-            st.subheader(f"Município: {municipio}")
-            st.write(f"**Secretário:** {secretario}")
-            st.write(f"**E-mail:** {email}")
-            st.write(f"**E-mail Institucional:** {email_inst}")
-            st.write(f"**Telefone:** {telefone}")
-            st.write(f"**Telefone Institucional:** {telefone_inst}")
-            st.write(f"**Endereço da SEMUS:** {endereco}")
-        else:
-            st.warning("Município não encontrado na base de dados.")
+        st.subheader(f"Município: {municipio}")
+        st.write(f"**Secretário:** {secretario}")
+        st.write(f"**E-mail:** {email}")
+        st.write(f"**E-mail Institucional:** {email_inst}")
+        st.write(f"**Telefone:** {telefone}")
+        st.write(f"**Telefone Institucional:** {telefone_inst}")
+        st.write(f"**Endereço da SEMUS:** {endereco}")
     else:
-        st.error("Nenhuma coluna relacionada a 'Municipio' foi encontrada na planilha.")
+        st.warning("Município não encontrado na base de dados.")
