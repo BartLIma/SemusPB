@@ -3,7 +3,10 @@ import pandas as pd
 
 # Carregar a planilha (certifique-se que o nome está correto e sem acento)
 
-df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding="utf-8")
+dimport pandas as pd
+
+df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding="latin1", on_bad_lines="skip")
+
 
 st.title("Consulta Secretários de Saúde - Paraíba")
 
