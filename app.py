@@ -23,7 +23,6 @@ municipios = sorted(df["Municipio"].dropna().unique())
 municipio = st.selectbox("Selecione o município:", municipios)
 
 if municipio:
-    # Busca case-insensitive e tolerante a espaços
     resultado = df[df["Municipio"].str.lower().str.strip() == municipio.lower().strip()]
     
     if not resultado.empty:
@@ -43,3 +42,9 @@ if municipio:
         st.write(f"**Endereço da Secretaria de Saúde:** {endereco}")
     else:
         st.warning("Município não encontrado na base de dados.")
+
+# Assinatura discreta no rodapé
+st.markdown(
+    "<p style='text-align:right; font-size:12px; color:gray;'>Bartolomeu Lima</p>",
+    unsafe_allow_html=True
+)
