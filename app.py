@@ -40,6 +40,6 @@ if municipio:
         st.write(f"**E-mail Institucional:** {email_inst}")
         st.write(f"**Telefone:** {telefone}")
         st.write(f"**Telefone Institucional:** {telefone_inst}")
-        st.write(f"**Endereço da SEMUS:** {endereco}")
+        st.write(f"**Endereço da Secretaria de Saúde:** {endereco}")
     else:
         st.warning("Município não encontrado na base de dados.")
