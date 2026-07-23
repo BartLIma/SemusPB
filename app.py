@@ -1,58 +1,24 @@
-import pandas as pd
-import streamlit as st
-
-# Carregar a planilha CSV (separador ponto e vírgula)
-df = pd.read_csv(
-    "secretarios_cosems_pb.csv",
-    sep=";", 
-    encoding="latin1", 
-    on_bad_lines="skip",
-    header=0
-)
-
-# Normalizar nomes das colunas
-df.columns = df.columns.str.strip()
-df.columns = df.columns.str.replace("﻿", "")  # remove BOM invisível
-
-st.title("Consulta Secretários de Saúde - Paraíba")
-
-# Criar lista de municípios únicos
-municipios = sorted(df["Municipio"].dropna().unique())
-
-# Selectbox para escolher município
-municipio = st.selectbox("Selecione o município:", municipios)
-
-if municipio:
-    resultado = df[df["Municipio"].str.lower().str.strip() == municipio.lower().strip()]
+# 📑 Bloco 4 — Prestação de Contas / Execução
+with st.expander("Prestação de Contas / Execução"):
+    st.write(f"**Data de Envio da PC:** {resultado.iloc[0].get('Data de Envio da PC', '')}")
+    st.write(f"**Dias de Atraso:** {resultado.iloc[0].get('Dias de Atraso', '')}")
+    st.write(f"**Dias Após Envio da PC:** {resultado.iloc[0].get('Dias apos Envio da PC', '')}")
+    st.write(f"**PC Informatizada:** {resultado.iloc[0].get('PC Informatizada', '')}")
     
-    if not resultado.empty:
-        secretario = resultado.iloc[0].get("Secretario", "")
-        email = resultado.iloc[0].get("Email", "")
-        email_inst = resultado.iloc[0].get("Email Institucional", "")
-        telefone = resultado.iloc[0].get("Telefone", "")
-        telefone_inst = resultado.iloc[0].get("Telefone Institucional", "")
-        endereco = resultado.iloc[0].get("Endereço da SEMUS", "")
-        fundo_saude = resultado.iloc[0].get("Fundo de Saúde", "")
-        cnpj = resultado.iloc[0].get("CNPJ", "")
-        regiao = resultado.iloc[0].get("Região de Saúde", "")
-        
-        # Telefones juntos em uma linha
-        telefones = f"{telefone} / {telefone_inst}" if telefone or telefone_inst else ""
-        
-        st.subheader(f"Município: {municipio}")
-        st.write(f"**Secretário:** {secretario}")
-        st.write(f"**E-mail:** {email}")
-        st.write(f"**E-mail Institucional:** {email_inst}")
-        st.write(f"**Telefones:** {telefones}")
-        st.write(f"**Endereço da Secretaria de Saúde:** {endereco}")
-        st.write(f"**Fundo de Saúde:** {fundo_saude}")
-        st.write(f"**CNPJ:** {cnpj}")
-        st.write(f"**Região de Saúde (CIR):** {regiao}")
-    else:
-        st.warning("Município não encontrado na base de dados.")
+    # Inclusão dos campos de risco logo após PC Informatizada
+    st.write(f"**Nota de Risco:** {resultado.iloc[0].get('Nota de Risco', '')}")
+    st.write(f"**Limite Toler Risco:** {resultado.iloc[0].get('Limite Toler  Risco', '')}")
+    faixa_risco = resultado.iloc[0].get('Faixa de Risco', '')
+    if pd.isna(faixa_risco):
+        faixa_risco = "Não informado"
+    st.write(f"**Faixa de Risco:** {faixa_risco}")
 
-# Assinatura discreta no rodapé
-st.markdown(
-    "<p style='text-align:right; font-size:12px; color:gray;'>Bartolomeu Lima</p>",
-    unsafe_allow_html=True
-)
+    st.write(f"**Grau de Prioridade:** {resultado.iloc[0].get('Grau de Prioridade', '')}")
+    st.write(f"**Relatórios de Execução:** {resultado.iloc[0].get('Relatorios de Execucao', '')}")
+    st.write(f"**Ação de Monitoramento:** {resultado.iloc[0].get('Acao de Monitoramnto', '')}")
+    st.write(f"**Parecer Financeiro:** {resultado.iloc[0].get('Parecer Financeiro', '')}")
+    st.write(f"**Parecer Tec-Mérito:** {resultado.iloc[0].get('Parecer Tec -Merito', '')}")
+    st.write(f"**Análise de Equipamentos:** {resultado.iloc[0].get('Analise de Equipamentos', '')}")
+    st.write(f"**Ação de Análise de PC:** {resultado.iloc[0].get('Acao de Analise de PC', '')}")
+    st.write(f"**Percentual de Evolução da Análise:** {resultado.iloc[0].get('Percentual de Evolucoo da Analise', '')}")
+    st.write(f"**Pareceres Incluídos na Plataforma:** {resultado.iloc[0].get('Pareceres Incluidos na Plataforma', '')}")
