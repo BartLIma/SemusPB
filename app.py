@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Carregar a planilha (certifique-se que o nome está correto e sem acento)
-df = pd.read_excel("secretarios_cosems_pb.xlsx")
+df = pd.read_excel("secretarios_cosems_pb.csv")
 
 st.title("Consulta Secretários de Saúde - Paraíba")
 
