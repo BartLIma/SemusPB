@@ -1,9 +1,5 @@
 import pandas as pd
-
 import streamlit as st
-# Carregar a planilha (certifique-se que o nome está correto e sem acento)
-
-dimport pandas as pd
 
 df = pd.read_csv(
     "secretarios_cosems_pb.csv",
@@ -11,6 +7,7 @@ df = pd.read_csv(
     encoding="latin1",  # garante leitura de acentos
     on_bad_lines="skip" # ignora linhas inválidas
 )
+# Carregar a planilha (certifique-se que o nome está correto e sem acento)
 
 
 df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding="latin1", on_bad_lines="skip")
