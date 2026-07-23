@@ -16,13 +16,9 @@ df.columns = df.columns.str.replace("﻿", "")  # remove BOM invisível
 
 st.title("Consulta Secretários de Saúde - Paraíba")
 
-# Debug: mostrar colunas carregadas
-st.write("Colunas carregadas:", df.columns.tolist())
-
 municipio = st.text_input("Digite o município:")
 
 if municipio:
-    # Detecta automaticamente a coluna de município
     col_municipio = [c for c in df.columns if "municipio" in c.lower()]
     
     if col_municipio:
