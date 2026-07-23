@@ -1,8 +1,9 @@
+import pandas as pd
+
 import streamlit as st
 # Carregar a planilha (certifique-se que o nome está correto e sem acento)
 
 dimport pandas as pd
-import pandas as pd
 
 df = pd.read_csv(
     "secretarios_cosems_pb.csv",
