@@ -23,7 +23,8 @@ municipios = sorted(df["Municipio"].dropna().unique())
 municipio = st.selectbox("Selecione o município:", municipios)
 
 if municipio:
-    resultado = df[df["Municipio"].str.lower() == municipio.lower()]
+    # Busca case-insensitive e tolerante a espaços
+    resultado = df[df["Municipio"].str.lower().str.strip() == municipio.lower().strip()]
     
     if not resultado.empty:
         secretario = resultado.iloc[0].get("Secretario", "")
