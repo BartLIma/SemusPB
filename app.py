@@ -16,13 +16,9 @@ df.columns = df.columns.str.replace("﻿", "")  # remove BOM invisível
 
 st.title("Consulta Secretários de Saúde - Paraíba")
 
-# Debug opcional: mostrar colunas carregadas
-st.write("Colunas carregadas:", df.columns.tolist())
-
 municipio = st.text_input("Digite o município:")
 
 if municipio:
-    # Detecta automaticamente a coluna de município
     col_municipio = [c for c in df.columns if "municipio" in c.lower()]
     
     if col_municipio:
@@ -47,4 +43,4 @@ if municipio:
         else:
             st.warning("Município não encontrado na base de dados.")
     else:
-        st.error("A coluna 'Municipio' não foi encontrada na planilha.")
+        st.error("Nenhuma coluna relacionada a 'Municipio' foi encontrada na planilha.")
