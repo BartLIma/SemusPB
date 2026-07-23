@@ -32,7 +32,7 @@ if municipio:
         email_inst = resultado.iloc[0].get("Email Institucional", "")
         telefone = resultado.iloc[0].get("Telefone", "")
         telefone_inst = resultado.iloc[0].get("Telefone Institucional", "")
-        endereco = resultado.iloc[0].get("Endereço da Secretaria de Saúde", "")
+        endereco = resultado.iloc[0].get("Endereço da Secretaria", "")
         
         st.subheader(f"Município: {municipio}")
         st.write(f"**Secretário:** {secretario}")
@@ -40,6 +40,6 @@ if municipio:
         st.write(f"**E-mail Institucional:** {email_inst}")
         st.write(f"**Telefone:** {telefone}")
         st.write(f"**Telefone Institucional:** {telefone_inst}")
-        st.write(f"**Endereço da Secretaria de Saúde:** {endereco}")
+        st.write(f"**Endereço da Secretaria:** {endereco}")
     else:
         st.warning("Município não encontrado na base de dados.")
