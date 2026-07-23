@@ -3,7 +3,8 @@ import pandas as pd
 
 # Carregar a planilha (certifique-se que o nome está correto e sem acento)
 
-df = pd.read_csv("secretarios_cosems_pb.csv", encoding="utf-8")
+df = pd.read_csv("secretarios_cosems_pb.csv", encoding="latin1")
+
 
 
 
