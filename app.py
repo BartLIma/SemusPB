@@ -3,11 +3,14 @@ import streamlit as st
 
 # Carregar a planilha CSV
 df = pd.read_csv(
+df = pd.read_csv(
     "secretarios_cosems_pb.csv",
-    sep=";",            # separador usado pelo Excel em português
-    encoding="latin1",  # garante leitura de acentos
-    on_bad_lines="skip" # ignora linhas inválidas
+    sep=";", 
+    encoding="latin1", 
+    on_bad_lines="skip",
+    header=0   # garante que a primeira linha seja usada como cabeçalho
 )
+
 
 # Normalizar nomes das colunas (remove espaços extras)
 df.columns = df.columns.str.strip()
