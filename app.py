@@ -1,3 +1,6 @@
+import pandas as pd
+import streamlit as st
+
 # Carregar a planilha CSV (separador ponto e vírgula)
 df = pd.read_csv(
     "secretarios_cosems_pb.csv",
