@@ -57,4 +57,4 @@ st.markdown(
 )
 
 # Volta para o Menu
-st.markdown("[⬅️ Voltar ao Menu](https://jcx2q4gypazay4wsx9btow.streamlit.app/)")
+st.markdown("[⬅️ Voltar ao Menu](https://menu1app.streamlit.app/)")
