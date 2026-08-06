@@ -3,21 +3,15 @@ import streamlit as st
 
 st.set_page_config(layout="wide")
 
-# --- TRUQUE CSS ATUALIZADO: Corrige o corte do título e reduz o tamanho da letra ---
+# --- TRUQUE CSS: Enxuga os recuos superiores para otimizar o campo de visão ---
 st.markdown(
     """
     <style>
         .block-container { padding-top: 1.2rem !important; padding-bottom: 1rem !important; }
         [data-testid="stSidebarUserContent"] { padding-top: 1.2rem !important; }
         
-        /* 🌟 AJUSTE SOLICITADO: Letra menor (1.8rem) e margem corrigida para não cortar no topo 🌟 */
-        h1 { 
-            font-size: 1.8rem !important; 
-            margin-top: -0.5rem !important; 
-            margin-bottom: 0.8rem !important; 
-            padding-top: 0px !important;
-        }
-        h3 { margin-top: 0.5rem !important; margin-bottom: 0.5rem !important; }
+        /* Ajuste fino para os cabeçalhos de visualização */
+        h3 { margin-top: -0.5rem !important; margin-bottom: 0.8rem !important; }
         .stMarkdown p { margin-bottom: 0.4rem !important; }
     </style>
     """,
@@ -64,7 +58,8 @@ for col_nome in lista_colunas_secretarios:
 df["Município"] = df["Município"].astype(str).str.strip()
 df["Secretário"] = df["Secretário"].astype(str).str.strip()
 
-st.title("🔍 Consulta de Secretários de Saúde - Paraíba")
+# 🌟 CORREÇÃO: Título principal alterado nativamente para o tamanho de subtítulo 🌟
+st.subheader("🔍 Consulta de Secretários de Saúde - Paraíba")
 
 # CAIXA DE BUSCA INTELIGENTE EM BRANCO 
 busca_termo = st.text_input("Digite o nome do Município ou do Secretário para pesquisar:", value="")
@@ -81,7 +76,7 @@ if busca_termo.strip():
             sec = f" ({row['Secretário']})" if pd.notna(row["Secretário"]) and row["Secretário"].strip() and row["Secretário"].lower() != 'nan' else ""
             opcoes_secretarios[f"{muni}{sec}"] = idx
         
-        selecao = st.selectbox("Selecione o registro exato para abrir a ficha:", sorted(opcoes_secretarios.keys()))
+        selecao = st.selectbox("Selecione the registro exato para abrir a ficha:", sorted(opcoes_secretarios.keys()))
         if selecao and opcoes_secretarios[selecao] is not None:
             st.session_state["indice_secretario_consultado"] = opcoes_secretarios[selecao]
     else:
