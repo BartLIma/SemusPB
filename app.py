@@ -3,15 +3,16 @@ import streamlit as st
 
 st.set_page_config(layout="wide")
 
-# --- TRUQUE CSS: Enxuga os recuos superiores para otimizar o campo de visão ---
+# --- TRUQUE CSS ATUALIZADO: Desce todo o conteúdo em uma linha para não cortar ---
 st.markdown(
     """
     <style>
-        .block-container { padding-top: 1.2rem !important; padding-bottom: 1rem !important; }
-        [data-testid="stSidebarUserContent"] { padding-top: 1.2rem !important; }
+        /* 🌟 AJUSTE SOLICITADO: Aumentado de 1.2rem para 2.5rem para descer todo o conteúdo 1 linha 🌟 */
+        .block-container { padding-top: 2.5rem !important; padding-bottom: 1rem !important; }
+        [data-testid="stSidebarUserContent"] { padding-top: 2.5rem !important; }
         
-        /* Ajuste fino para os cabeçalhos de visualização */
-        h3 { margin-top: -0.5rem !important; margin-bottom: 0.8rem !important; }
+        /* Ajuste fino das margens dos subcabeçalhos */
+        h3 { margin-top: 0.5rem !important; margin-bottom: 0.8rem !important; }
         .stMarkdown p { margin-bottom: 0.4rem !important; }
     </style>
     """,
@@ -58,7 +59,7 @@ for col_nome in lista_colunas_secretarios:
 df["Município"] = df["Município"].astype(str).str.strip()
 df["Secretário"] = df["Secretário"].astype(str).str.strip()
 
-# 🌟 CORREÇÃO: Título principal alterado nativamente para o tamanho de subtítulo 🌟
+# Título em tamanho de subtítulo
 st.subheader("🔍 Consulta de Secretários de Saúde - Paraíba")
 
 # CAIXA DE BUSCA INTELIGENTE EM BRANCO 
@@ -76,7 +77,7 @@ if busca_termo.strip():
             sec = f" ({row['Secretário']})" if pd.notna(row["Secretário"]) and row["Secretário"].strip() and row["Secretário"].lower() != 'nan' else ""
             opcoes_secretarios[f"{muni}{sec}"] = idx
         
-        selecao = st.selectbox("Selecione the registro exato para abrir a ficha:", sorted(opcoes_secretarios.keys()))
+        selecao = st.selectbox("Selecione o registro exato para abrir a ficha:", sorted(opcoes_secretarios.keys()))
         if selecao and opcoes_secretarios[selecao] is not None:
             st.session_state["indice_secretario_consultado"] = opcoes_secretarios[selecao]
     else:
