@@ -3,13 +3,20 @@ import streamlit as st
 
 st.set_page_config(layout="wide")
 
-# --- TRUQUE CSS: Identidade visual padronizada (Ganho máximo de campo de visão) ---
+# --- TRUQUE CSS ATUALIZADO: Corrige o corte do título e reduz o tamanho da letra ---
 st.markdown(
     """
     <style>
         .block-container { padding-top: 1.2rem !important; padding-bottom: 1rem !important; }
         [data-testid="stSidebarUserContent"] { padding-top: 1.2rem !important; }
-        h1 { margin-top: -1.2rem !important; margin-bottom: 0.5rem !important; }
+        
+        /* 🌟 AJUSTE SOLICITADO: Letra menor (1.8rem) e margem corrigida para não cortar no topo 🌟 */
+        h1 { 
+            font-size: 1.8rem !important; 
+            margin-top: -0.5rem !important; 
+            margin-bottom: 0.8rem !important; 
+            padding-top: 0px !important;
+        }
         h3 { margin-top: 0.5rem !important; margin-bottom: 0.5rem !important; }
         .stMarkdown p { margin-bottom: 0.4rem !important; }
     </style>
