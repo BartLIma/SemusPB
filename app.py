@@ -37,7 +37,7 @@ mapeamento_colunas = {}
 for col in df.columns:
     col_limpa = col.strip().lower().replace("-", "").replace(" ", "")
     if "municip" in col_limpa: mapeamento_colunas[col] = "Município"
-    elif "secretar" in col_limpa: mapeamento_colunas[col] = "Secretário"
+    elif "secretar" in col_limpa or "nome" in col_limpa: mapeamento_colunas[col] = "Secretário"  # 🌟 CORREÇÃO AQUI
     elif "emailinstitucional" in col_limpa: mapeamento_colunas[col] = "Email Institucional"
     elif "email" in col_limpa: mapeamento_colunas[col] = "Email"
     elif "telefoneinstitucional" in col_limpa: mapeamento_colunas[col] = "Telefone Institucional"
@@ -48,6 +48,7 @@ for col in df.columns:
     elif "regiaodesaud" in col_limpa: mapeamento_colunas[col] = "Região de Saúde"
 
 df = df.rename(columns=mapeamento_colunas)
+
 
 # Criação de colunas de segurança caso falte alguma no CSV de origem
 lista_colunas_secretarios = ["Município", "Secretário", "Email", "Email Institucional", "Telefone", "Telefone Institucional", "Endereço da SEMUS", "Fundo de Saúde", "CNPJ", "Região de Saúde"]
