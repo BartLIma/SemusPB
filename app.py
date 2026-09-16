@@ -41,7 +41,6 @@ except Exception:
     
 df = df.dropna(how="all")
 
-
 # MAPEAMENTO INTELIGENTE: Corrigido e adaptado
 mapeamento_colunas = {}
 for col in df.columns:
@@ -82,15 +81,18 @@ with st.sidebar:
         registros_encontrados = df[filtro]
         
         if not registros_encontrados.empty:
-            opcoes_secretarios = {"-- Selecione o registro --": None}
+            opcoes_secretarios = {}
             for idx, row in registros_encontrados.iterrows():
                 muni = row["Município"]
                 sec = f" ({row['Secretário']})" if pd.notna(row["Secretário"]) and row["Secretário"].strip() and row["Secretário"].lower() != 'nan' else ""
                 opcoes_secretarios[f"{muni}{sec}"] = idx
             
-            # Caixa de seleção confinada na barra lateral, não esticando na tela inteira
-            selecao = st.selectbox("Registros localizados:", sorted(opcoes_secretarios.keys()))
-            if selecao and opcoes_secretarios[selecao] is not None:
+            # Garante que a opção em branco fique no topo fixo sem quebrar o sorted()
+            lista_ordenada = ["-- Selecione o registro --"] + sorted(list(opcoes_secretarios.keys()))
+            
+            selecao = st.selectbox("Registros localizados:", lista_ordenada)
+            
+            if selecao and selecao != "-- Selecione o registro --":
                 st.session_state["indice_secretario_consultado"] = opcoes_secretarios[selecao]
             else:
                 st.session_state["indice_secretario_consultado"] = None
@@ -100,10 +102,11 @@ with st.sidebar:
     else:
         st.session_state["indice_secretario_consultado"] = None
 
-# --- ÁREA PRINCIPAL (FICHA DE EXIBIÇÃO DE ALTO IMPACTO VIZUAL) ---
+# --- ÁREA PRINCIPAL (FICHA DE EXIBIÇÃO DE ALTO IMPACTO VISUAL) ---
 st.title("🏛️ Sistema de Consulta — Secretarias de Saúde da Paraíba")
 
-if st.session_state["indice_secretario_consultado"] is not None:
+# Adiciona validação para garantir que o índice salvo realmente existe no DataFrame atual
+if st.session_state["indice_secretario_consultado"] is not None and st.session_state["indice_secretario_consultado"] in df.index:
     s_idx = st.session_state["indice_secretario_consultado"]
     
     # Cabeçalho da ficha com visual "Card" usando container interno
@@ -144,7 +147,7 @@ if st.session_state["indice_secretario_consultado"] is not None:
         st.info(f"🏢 **Endereço da SEMUS:** {txt_end} \n\n 🏥 **Fundo de Saúde:** {txt_fund} | 📋 **CNPJ:** {txt_cnpj}")
 
 else:
-    # Estado inicial amigável quando nenhum município está selecionado
+    # Estado inicial amigável quando nenhum município está selecionado ou se reiniciado
     st.markdown("---")
     st.info("💡 **Aguardando consulta:** Utilize o menu ao lado esquerdo para digitar o nome de uma cidade ou gestor e abrir a ficha cadastral completa.")
 
