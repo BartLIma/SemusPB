@@ -69,7 +69,7 @@ df["Secretário"] = df["Secretário"].astype(str).str.strip()
 # --- PAINEL LATERAL DE BUSCA (MELHORIA ESTÉTICA) ---
 with st.sidebar:
     st.header("🔍 Painel de Busca")
-    st.write("Utilize os filtros abaixo para localizar e selecionar o registro desejado.")
+    st.write("Selecione: município ou secretário(a)")
     
     busca_termo = st.text_input("Digite o Município ou Secretário:", value="")
     
