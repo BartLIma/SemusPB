@@ -32,12 +32,30 @@ if "indice_secretario_consultado" not in st.session_state:
     st.session_state["indice_secretario_consultado"] = None
 
 # --- CARREGAMENTO SEGURO DOS DADOS ---
-try:
-    # 🌟 Tenta ler primeiro usando VÍRGULA como separador
-    df = pd.read_csv("secretarios_cosems_pb.csv", sep=",", encoding="utf-8-sig", dtype=str, skip_blank_lines=True)
-except Exception:
-    # 🔄 Caso dê erro, tenta ler usando PONTO E VÍRGULA como plano B
-    df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding="utf-8-sig", dtype=str, skip_blank_lines=True)
+encodings_para_testar = ["utf-8-sig", "ISO-8859-1", "cp1252"]
+df = None
+
+# Tenta ler primeiro com separador por VÍRGULA testando as codificações
+for enc in encodings_para_testar:
+    try:
+        df = pd.read_csv("secretarios_cosems_pb.csv", sep=",", encoding=enc, dtype=str, skip_blank_lines=True)
+        break
+    except Exception:
+        continue
+
+# Se falhar com vírgula, tenta ler com PONTO E VÍRGULA como plano B
+if df is None:
+    for enc in encodings_para_testar:
+        try:
+            df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding=enc, dtype=str, skip_blank_lines=True)
+            break
+        except Exception:
+            continue
+
+# Validação final caso o arquivo não exista ou esteja totalmente corrompido
+if df is None:
+    st.error("❌ Não foi possível ler o arquivo 'secretarios_cosems_pb.csv'. Verifique se o arquivo está na pasta ou se o formato é válido.")
+    st.stop()
     
 df = df.dropna(how="all")
 
