@@ -33,11 +33,14 @@ if "indice_secretario_consultado" not in st.session_state:
 
 # --- CARREGAMENTO SEGURO DOS DADOS ---
 try:
-    df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding="utf-8-sig", dtype=str, skip_blank_lines=True)
-except Exception:
+    # 🌟 Tenta ler primeiro usando VÍRGULA como separador
     df = pd.read_csv("secretarios_cosems_pb.csv", sep=",", encoding="utf-8-sig", dtype=str, skip_blank_lines=True)
+except Exception:
+    # 🔄 Caso dê erro, tenta ler usando PONTO E VÍRGULA como plano B
+    df = pd.read_csv("secretarios_cosems_pb.csv", sep=";", encoding="utf-8-sig", dtype=str, skip_blank_lines=True)
     
 df = df.dropna(how="all")
+
 
 # MAPEAMENTO INTELIGENTE: Corrigido e adaptado
 mapeamento_colunas = {}
