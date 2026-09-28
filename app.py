@@ -1,27 +1,17 @@
 import pandas as pd
 import streamlit as st
+import urllib.parse
+import unicodedata
 
 st.set_page_config(layout="wide", page_title="Consulta de Secretários", page_icon="🔍")
 
-# --- TRUQUE CSS ATUALIZADO: Design moderno e espaçamentos equilibrados ---
+# --- TRUQUE CSS ATUALIZADO ---
 st.markdown(
     """
     <style>
-        /* Ajuste do container principal */
         .block-container { padding-top: 2rem !important; padding-bottom: 2rem !important; }
-        
-        /* Estilização dos cards/fichas para dar profundidade */
-        div[data-testid="stVerticalBlock"] > div {
-            border-radius: 0px;
-        }
-        
-        /* Customização discreta de títulos */
-        h2, h3 {
-            color: #1E3A8A;
-            font-weight: 600 !important;
-        }
-        
-        /* Ajuste de margens de parágrafos */
+        div[data-testid="stVerticalBlock"] > div { border-radius: 0px; }
+        h2, h3 { color: #1E3A8A; font-weight: 600 !important; }
         .stMarkdown p { margin-bottom: 0.5rem !important; }
     </style>
     """,
@@ -35,7 +25,6 @@ if "indice_secretario_consultado" not in st.session_state:
 encodings_para_testar = ["utf-8-sig", "ISO-8859-1", "cp1252"]
 df = None
 
-# Tenta ler primeiro com separador por VÍRGULA testando as codificações
 for enc in encodings_para_testar:
     try:
         df = pd.read_csv("secretarios_cosems_pb.csv", sep=",", encoding=enc, dtype=str, skip_blank_lines=True)
@@ -43,7 +32,6 @@ for enc in encodings_para_testar:
     except Exception:
         continue
 
-# Se falhar com vírgula, tenta ler com PONTO E VÍRGULA como plano B
 if df is None:
     for enc in encodings_para_testar:
         try:
@@ -52,17 +40,23 @@ if df is None:
         except Exception:
             continue
 
-# Validação final caso o arquivo não exista ou esteja totalmente corrompido
 if df is None:
     st.error("❌ Não foi possível ler o arquivo 'secretarios_cosems_pb.csv'. Verifique se o arquivo está na pasta ou se o formato é válido.")
     st.stop()
     
 df = df.dropna(how="all")
 
-# MAPEAMENTO INTELIGENTE: Corrigido e adaptado
+# Função robusta para limpar cabeçalhos (remove acentos, espaços e pontuações)
+def normalizar_texto(texto):
+    if not isinstance(texto, str):
+        return ""
+    texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
+    return texto.strip().lower().replace("-", "").replace(" ", "").replace("_", "")
+
+# --- MAPEAMENTO SEM FALHAS PARA O ENDEREÇO E COLUNAS ---
 mapeamento_colunas = {}
 for col in df.columns:
-    col_limpa = col.strip().lower().replace("-", "").replace(" ", "")
+    col_limpa = normalizar_texto(col)
     if "municip" in col_limpa: mapeamento_colunas[col] = "Município"
     elif "secretar" in col_limpa or "nome" in col_limpa: mapeamento_colunas[col] = "Secretário"
     elif "emailinstitucional" in col_limpa: mapeamento_colunas[col] = "Email Institucional"
@@ -76,13 +70,12 @@ for col in df.columns:
 
 df = df.rename(columns=mapeamento_colunas)
 
-# Criação de colunas de segurança caso falte alguma no CSV de origem
+# Garante a existência de todas as colunas necessárias na estrutura do DataFrame
 lista_colunas_secretarios = ["Município", "Secretário", "Email", "Email Institucional", "Telefone", "Telefone Institucional", "Endereço da SEMUS", "Fundo de Saúde", "CNPJ", "Região de Saúde"]
 for col_nome in lista_colunas_secretarios:
     if col_nome not in df.columns:
         df[col_nome] = ""
 
-# Higieniza textos bases de pesquisa
 df["Município"] = df["Município"].astype(str).str.strip()
 df["Secretário"] = df["Secretário"].astype(str).str.strip()
 # --- PAINEL LATERAL DE BUSCA ---
@@ -127,27 +120,20 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
     secretario_atual = df.loc[s_idx, 'Secretário']
     regiao_atual = df.loc[s_idx, 'Região de Saúde']
     
-    # Tratamento de nulos/vazios de forma segura
-    v_em = df.loc[s_idx, "Email"]
-    txt_em = v_em if pd.notna(v_em) and str(v_em).lower() != 'nan' and str(v_em).strip() != "" else "Não informado"
-    
-    v_emi = df.loc[s_idx, "Email Institucional"]
-    txt_emi = v_emi if pd.notna(v_emi) and str(v_emi).lower() != 'nan' and str(v_emi).strip() != "" else "Não informado"
-    
-    v_tl = df.loc[s_idx, "Telefone"]
-    txt_tl = v_tl if pd.notna(v_tl) and str(v_tl).lower() != 'nan' and str(v_tl).strip() != "" else "Não informado"
-    
-    v_tli = df.loc[s_idx, "Telefone Institucional"]
-    txt_tli = v_tli if pd.notna(v_tli) and str(v_tli).lower() != 'nan' and str(v_tli).strip() != "" else "Não informado"
-    
-    v_end = df.loc[s_idx, 'Endereço da SEMUS']
-    txt_end = v_end if pd.notna(v_end) and str(v_end).lower() != 'nan' and str(v_end).strip() != "" else "Não informado"
-    
-    v_fund = df.loc[s_idx, 'Fundo de Saúde']
-    txt_fund = v_fund if pd.notna(v_fund) and str(v_fund).lower() != 'nan' and str(v_fund).strip() != "" else "Não informado"
-    
-    v_cnpj = df.loc[s_idx, 'CNPJ']
-    txt_cnpj = v_cnpj if pd.notna(v_cnpj) and str(v_cnpj).lower() != 'nan' and str(v_cnpj).strip() != "" else "Não informado"
+    # Tratamento individual e seguro para exibição
+    def obter_valor_valido(campo):
+        val = df.loc[s_idx, campo]
+        if pd.isna(val) or str(val).lower() == 'nan' or str(val).strip() == "":
+            return "Não informado"
+        return str(val).strip()
+
+    txt_em = obter_valor_valido("Email")
+    txt_emi = obter_valor_valido("Email Institucional")
+    txt_tl = obter_valor_valido("Telefone")
+    txt_tli = obter_valor_valido("Telefone Institucional")
+    txt_end = obter_valor_valido("Endereço da SEMUS")
+    txt_fund = obter_valor_valido("Fundo de Saúde")
+    txt_cnpj = obter_valor_valido("CNPJ")
 
     # --- GERADOR DE TEXTO PARA EXPORTAÇÃO ---
     texto_exportacao = f"""### 📍 FICHA INSTITUCIONAL — {municipio_atual.upper()}
@@ -163,7 +149,6 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
 📋 **CNPJ:** {txt_cnpj}
 """
 
-    # Divisão da Tela Principal em duas seções (Ficha / Mapa e Ferramentas)
     col_ficha, col_mapa = st.columns([1.2, 0.8], gap="large")
     
     with col_ficha:
@@ -208,10 +193,13 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
             
             st.markdown(" ")
             st.markdown("🗺️ **Geolocalização Geográfica**")
-            url_mapa = f"https://google.com{municipio_atual}%20-%20Paraiba,%20Brazil&t=&z=11&ie=UTF8&iwloc=&output=embed"
+            
+            # --- MAPA ATUALIZADO OPENSTREETMAP (LIVRE DE ERROS DE IP) ---
+            query_localidade = urllib.parse.quote(f"{municipio_atual}, Paraiba, Brazil")
+            url_osm = f"https://openstreetmap.org{query_localidade}"
             
             st.markdown(
-                f'<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="{url_mapa}"></iframe>', 
+                f'<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="{url_osm}" style="border: 1px solid #ccc; border-radius:4px;"></iframe>', 
                 unsafe_allow_html=True
             )
 
