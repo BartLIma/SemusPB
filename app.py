@@ -85,8 +85,7 @@ for col_nome in lista_colunas_secretarios:
 # Higieniza textos bases de pesquisa
 df["Município"] = df["Município"].astype(str).str.strip()
 df["Secretário"] = df["Secretário"].astype(str).str.strip()
-
-# --- PAINEL LATERAL DE BUSCA (MELHORIA ESTÉTICA) ---
+# --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
     st.header("🔍 Painel de Busca")
     st.write("Selecione:")
@@ -105,9 +104,7 @@ with st.sidebar:
                 sec = f" ({row['Secretário']})" if pd.notna(row["Secretário"]) and row["Secretário"].strip() and row["Secretário"].lower() != 'nan' else ""
                 opcoes_secretarios[f"{muni}{sec}"] = idx
             
-            # Garante que a opção em branco fique no topo fixo sem quebrar o sorted()
             lista_ordenada = ["-- Selecione o registro --"] + sorted(list(opcoes_secretarios.keys()))
-            
             selecao = st.selectbox("Registros localizados:", lista_ordenada)
             
             if selecao and selecao != "-- Selecione o registro --":
@@ -120,52 +117,105 @@ with st.sidebar:
     else:
         st.session_state["indice_secretario_consultado"] = None
 
-# --- ÁREA PRINCIPAL (FICHA DE EXIBIÇÃO DE ALTO IMPACTO VISUAL) ---
+# --- ÁREA PRINCIPAL ---
 st.title("🏛️ Sistema de Consulta — Secretarias de Saúde da Paraíba")
 
-# Adiciona validação para garantir que o índice salvo realmente existe no DataFrame atual
 if st.session_state["indice_secretario_consultado"] is not None and st.session_state["indice_secretario_consultado"] in df.index:
     s_idx = st.session_state["indice_secretario_consultado"]
     
-    # Cabeçalho da ficha com visual "Card" usando container interno
-    with st.container(border=True):
-        st.subheader(f"📍 Ficha Institucional — {df.loc[s_idx, 'Município']}")
-        st.markdown("---")
-        
-        # Estrutura limpa em colunas
-        f_col1, f_col2 = st.columns(2)
-        with f_col1:
-            st.markdown(f"👤 **Secretário(a) de Saúde:**<br><span style='font-size: 18px; color: #2563EB; font-weight: bold;'>{df.loc[s_idx, 'Secretário']}</span>", unsafe_allow_html=True)
-            st.write("") # Espaçador
-            v_em = df.loc[s_idx, "Email"]
-            st.write(f"📧 **E-mail Pessoal:** {v_em if pd.notna(v_em) and str(v_em).lower() != 'nan' else '_Não informado_'}")
-            v_emi = df.loc[s_idx, "Email Institucional"]
-            st.write(f"🏢 **E-mail Institucional:** {v_emi if pd.notna(v_emi) and str(v_emi).lower() != 'nan' else '_Não informado_'}")
+    municipio_atual = df.loc[s_idx, 'Município']
+    secretario_atual = df.loc[s_idx, 'Secretário']
+    regiao_atual = df.loc[s_idx, 'Região de Saúde']
+    
+    # Tratamento de nulos/vazios de forma segura
+    v_em = df.loc[s_idx, "Email"]
+    txt_em = v_em if pd.notna(v_em) and str(v_em).lower() != 'nan' and str(v_em).strip() != "" else "Não informado"
+    
+    v_emi = df.loc[s_idx, "Email Institucional"]
+    txt_emi = v_emi if pd.notna(v_emi) and str(v_emi).lower() != 'nan' and str(v_emi).strip() != "" else "Não informado"
+    
+    v_tl = df.loc[s_idx, "Telefone"]
+    txt_tl = v_tl if pd.notna(v_tl) and str(v_tl).lower() != 'nan' and str(v_tl).strip() != "" else "Não informado"
+    
+    v_tli = df.loc[s_idx, "Telefone Institucional"]
+    txt_tli = v_tli if pd.notna(v_tli) and str(v_tli).lower() != 'nan' and str(v_tli).strip() != "" else "Não informado"
+    
+    v_end = df.loc[s_idx, 'Endereço da SEMUS']
+    txt_end = v_end if pd.notna(v_end) and str(v_end).lower() != 'nan' and str(v_end).strip() != "" else "Não informado"
+    
+    v_fund = df.loc[s_idx, 'Fundo de Saúde']
+    txt_fund = v_fund if pd.notna(v_fund) and str(v_fund).lower() != 'nan' and str(v_fund).strip() != "" else "Não informado"
+    
+    v_cnpj = df.loc[s_idx, 'CNPJ']
+    txt_cnpj = v_cnpj if pd.notna(v_cnpj) and str(v_cnpj).lower() != 'nan' and str(v_cnpj).strip() != "" else "Não informado"
+
+    # --- GERADOR DE TEXTO PARA EXPORTAÇÃO ---
+    texto_exportacao = f"""### 📍 FICHA INSTITUCIONAL — {municipio_atual.upper()}
+    
+👤 **Secretário(a):** {secretario_atual}
+🗺️ **Região de Saúde (CIR):** {regiao_atual}
+📧 **E-mail Pessoal:** {txt_em}
+🏢 **E-mail Institucional:** {txt_emi}
+📱 **Telefone Celular:** {txt_tl}
+☎️ **Telefone Institucional:** {txt_tli}
+🏢 **Endereço da SEMUS:** {txt_end}
+🏥 **Fundo de Saúde:** {txt_fund}
+📋 **CNPJ:** {txt_cnpj}
+"""
+
+    # Divisão da Tela Principal em duas seções (Ficha / Mapa e Ferramentas)
+    col_ficha, col_mapa = st.columns([1.2, 0.8], gap="large")
+    
+    with col_ficha:
+        with st.container(border=True):
+            st.subheader(f"📍 Ficha Institucional — {municipio_atual}")
+            st.markdown("---")
             
-        with f_col2:
-            st.markdown(f"🗺️ **Região de Saúde (CIR):**<br><span style='font-size: 18px; color: #10B981; font-weight: bold;'>{df.loc[s_idx, 'Região de Saúde']}</span>", unsafe_allow_html=True)
-            st.write("") # Espaçador
-            v_tl = df.loc[s_idx, "Telefone"]
-            st.write(f"📱 **Telefone Celular:** {v_tl if pd.notna(v_tl) and str(v_tl).lower() != 'nan' else '_Não informado_'}")
-            v_tli = df.loc[s_idx, "Telefone Institucional"]
-            st.write(f"☎️ **Telefone Institucional:** {v_tli if pd.notna(v_tli) and str(v_tli).lower() != 'nan' else '_Não informado_'}")
-        
-        st.markdown("---")
-        
-        # Coleta das strings de rodapé do card
-        v_end = df.loc[s_idx, 'Endereço da SEMUS']
-        v_fund = df.loc[s_idx, 'Fundo de Saúde']
-        v_cnpj = df.loc[s_idx, 'CNPJ']
-        
-        txt_end = v_end if pd.notna(v_end) and str(v_end).lower() != 'nan' else 'Não informado'
-        txt_fund = v_fund if pd.notna(v_fund) and str(v_fund).lower() != 'nan' else 'Não informado'
-        txt_cnpj = v_cnpj if pd.notna(v_cnpj) and str(v_cnpj).lower() != 'nan' else 'Não informado'
-        
-        # Faixa consolidada mais estilosa dentro do card
-        st.info(f"🏢 **Endereço da SEMUS:** {txt_end} \n\n 🏥 **Fundo de Saúde:** {txt_fund} | 📋 **CNPJ:** {txt_cnpj}")
+            f_col1, f_col2 = st.columns(2)
+            with f_col1:
+                st.markdown(f"👤 **Secretário(a) de Saúde:**<br><span style='font-size: 18px; color: #2563EB; font-weight: bold;'>{secretario_atual}</span>", unsafe_allow_html=True)
+                st.write("") 
+                st.write(f"📧 **E-mail Pessoal:** {txt_em}")
+                st.write(f"🏢 **E-mail Institucional:** {txt_emi}")
+                
+            with f_col2:
+                st.markdown(f"🗺️ **Região de Saúde (CIR):**<br><span style='font-size: 18px; color: #10B981; font-weight: bold;'>{regiao_atual}</span>", unsafe_allow_html=True)
+                st.write("") 
+                st.write(f"📱 **Telefone Celular:** {txt_tl}")
+                st.write(f"☎️ **Telefone Institucional:** {txt_tli}")
+            
+            st.markdown("---")
+            st.info(f"🏢 **Endereço da SEMUS:** {txt_end}")
+            st.warning(f"🏥 **Fundo de Saúde:** {txt_fund}  |  📋 **CNPJ:** {txt_cnpj}")
+
+    with col_mapa:
+        with st.container(border=True):
+            st.subheader("🛠️ Ações e Localização")
+            st.markdown("---")
+            
+            c1, c2 = st.columns(2)
+            with c1:
+                st.download_button(
+                    label="📥 Baixar Dados (TXT)",
+                    data=texto_exportacao,
+                    file_name=f"ficha_saude_{municipio_atual.lower().replace(' ', '_')}.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+            with c2:
+                with st.popover("📋 Copiar Dados", use_container_width=True):
+                    st.code(texto_exportacao, language="markdown")
+            
+            st.markdown(" ")
+            st.markdown("🗺️ **Geolocalização Geográfica**")
+            url_mapa = f"https://google.com{municipio_atual}%20-%20Paraiba,%20Brazil&t=&z=11&ie=UTF8&iwloc=&output=embed"
+            
+            st.markdown(
+                f'<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="{url_mapa}"></iframe>', 
+                unsafe_allow_html=True
+            )
 
 else:
-    # Estado inicial amigável quando nenhum município está selecionado ou se reiniciado
     st.markdown("---")
     st.info("💡 **Aguardando consulta:** Utilize o menu ao lado esquerdo para digitar o nome de uma cidade ou gestor e abrir a ficha cadastral completa.")
 
