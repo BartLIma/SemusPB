@@ -97,7 +97,7 @@ def buscar_coordenadas_municipio(nome_municipio):
     except Exception:
         pass
     # Coordenadas padrão aproximadas da Paraíba caso a busca falhe temporariamente
-    return -7.1198, -34.8450
+    return -7.1198, -34.8480
 
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
