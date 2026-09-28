@@ -194,12 +194,15 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
             st.markdown(" ")
             st.markdown("🗺️ **Geolocalização Geográfica**")
             
-            # --- MAPA ATUALIZADO OPENSTREETMAP (LIVRE DE ERROS DE IP) ---
+            # --- URL CORRIGIDA: Usa rota limpa de busca do OpenStreetMap para evitar colagem de texto ---
             query_localidade = urllib.parse.quote(f"{municipio_atual}, Paraiba, Brazil")
-            url_osm = f"https://openstreetmap.org{query_localidade}"
+            url_osm_corrigido = f"https://openstreetmap.org{query_localidade}"
+            
+            # Para exibição direta em iframe sem quebras de DNS
+            url_embed = f"https://google.com{query_localidade}&t=&z=12&ie=UTF8&iwloc=&output=embed"
             
             st.markdown(
-                f'<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="{url_osm}" style="border: 1px solid #ccc; border-radius:4px;"></iframe>', 
+                f'<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="{url_embed}" style="border: 1px solid #ccc; border-radius:4px;"></iframe>', 
                 unsafe_allow_html=True
             )
 
@@ -210,3 +213,4 @@ else:
 # --- RODAPÉ DISCRETO ---
 st.markdown("---")
 st.markdown("<p style='text-align:right; font-size:12px; color:#A3A3A3;'>Bartolomeu Lima - Corecon-ES 1541</p>", unsafe_allow_html=True)
+
