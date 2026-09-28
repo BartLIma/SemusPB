@@ -75,37 +75,32 @@ for col_nome in lista_colunas_secretarios:
 
 df["Município"] = df["Município"].astype(str).str.strip()
 df["Secretário"] = df["Secretário"].astype(str).str.strip()
-from geopy.geocoders import Nominatim
-import time
+import requests
+import urllib.parse
 
-# --- FUNÇÃO ATUALIZADA PARA EVITAR A COORDENADA PADRÃO DE JOÃO PESSOA ---
+# --- FUNÇÃO SUBSTITUTA PURA (NÃO PRECISA DE GEOPY E EVITA ERROS DE MENU) ---
 @st.cache_data(show_spinner=False)
 def buscar_coordenadas_municipio(nome_municipio):
-    """Consulta as coordenadas reais usando a biblioteca Geopy/Nominatim de forma estável"""
+    """Consulta a API Nominatim usando apenas requests nativo, eliminando erros de modulo"""
     try:
-        # Criamos o localizador com um agente único para evitar bloqueios do servidor
-        geolocator = Nominatim(user_agent="cosems_pb_analytics_app_v2")
-        localizacao = geolocator.geocode(f"{nome_municipio}, Paraiba, Brazil", timeout=10)
+        # Codifica o nome para formato de URL seguro
+        termo_busca = urllib.parse.quote(f"{nome_municipio}, Paraiba, Brazil")
+        url = f"https://openstreetmap.org{termo_busca}&format=jsonv2&limit=1"
         
-        if localizacao:
-            return localizacao.latitude, localizacao.longitude
+        # Cabeçalho de identificação para evitar bloqueio do servidor
+        headers = {"User-Agent": "ConsultaSecretariosSaudeParaiba/1.1 (suporte@exemplo.com)"}
+        
+        resposta = requests.get(url, headers=headers, timeout=8)
+        dados = resposta.json()
+        
+        if dados and len(dados) > 0:
+            # Retorna latitude e longitude puras da lista
+            return float(dados[0]["lat"]), float(dados[0]["lon"])
     except Exception:
         pass
-    
-    # Se a busca falhar temporariamente por rede, tenta uma segunda busca focada apenas na cidade e estado
-    try:
-        time.sleep(1) # Pausa amigável exigida pelo servidor de mapas
-        geolocator = Nominatim(user_agent="cosems_pb_analytics_backup")
-        localizacao = geolocator.geocode(f"{nome_municipio}, Paraiba", timeout=10)
-        if localizacao:
-            return localizacao.latitude, localizacao.longitude
-    except Exception:
-        pass
-
-    # CASO TUDO FALHE: Retorna uma coordenada neutra central do estado da Paraíba (Perto de Soledade)
-    # Isso evita cair sempre em João Pessoa e mostra visualmente que o ponto está no interior se for o caso
+        
+    # Coordenada neutra central do estado da Paraíba como contingência segura
     return -7.0600, -36.3600
-
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
     st.header("🔍 Painel de Busca")
