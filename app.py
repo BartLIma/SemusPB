@@ -192,7 +192,7 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
                     st.code(texto_exportacao, language="markdown")
             
                        st.markdown(" ")
-            st.markdown("🗺️ **Geolocalização Geográfica**")
+                    st.markdown("🗺️ **Geolocalização Geográfica**")
             
             # Força a limpeza e codificação correta do termo de busca
             termo_mapa = f"{municipio_atual}, Paraiba, Brazil"
