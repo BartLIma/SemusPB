@@ -191,7 +191,7 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
                 with st.popover("📋 Copiar Dados", use_container_width=True):
                     st.code(texto_exportacao, language="markdown")
             
-                       st.markdown(" ")
+                    st.markdown(" ")
                     st.markdown("🗺️ **Geolocalização Geográfica**")
             
             # Força a limpeza e codificação correta do termo de busca
