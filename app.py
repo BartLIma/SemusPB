@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-import urllib.parse
+import requests
 import unicodedata
 
 st.set_page_config(layout="wide", page_title="Consulta de Secretários", page_icon="🔍")
@@ -46,14 +46,12 @@ if df is None:
     
 df = df.dropna(how="all")
 
-# Função robusta para limpar cabeçalhos (remove acentos, espaços e pontuações)
 def normalizar_texto(texto):
     if not isinstance(texto, str):
         return ""
     texto = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
     return texto.strip().lower().replace("-", "").replace(" ", "").replace("_", "")
 
-# --- MAPEAMENTO SEM FALHAS PARA O ENDEREÇO E COLUNAS ---
 mapeamento_colunas = {}
 for col in df.columns:
     col_limpa = normalizar_texto(col)
@@ -70,7 +68,6 @@ for col in df.columns:
 
 df = df.rename(columns=mapeamento_colunas)
 
-# Garante a existência de todas as colunas necessárias na estrutura do DataFrame
 lista_colunas_secretarios = ["Município", "Secretário", "Email", "Email Institucional", "Telefone", "Telefone Institucional", "Endereço da SEMUS", "Fundo de Saúde", "CNPJ", "Região de Saúde"]
 for col_nome in lista_colunas_secretarios:
     if col_nome not in df.columns:
@@ -78,6 +75,30 @@ for col_nome in lista_colunas_secretarios:
 
 df["Município"] = df["Município"].astype(str).str.strip()
 df["Secretário"] = df["Secretário"].astype(str).str.strip()
+# --- FUNÇÃO CACHED PARA ADQUIRIR COORDENADAS VIA API (LIVRE DE IFRAME/ERROS DE IP) ---
+@st.cache_data(show_spinner=False)
+def buscar_coordenadas_municipio(nome_municipio):
+    """Consulta a API Nominatim para obter lat/lon do município sem expor links ao navegador"""
+    try:
+        url = "https://openstreetmap.org"
+        parametros = {
+            "q": f"{nome_municipio}, Paraiba, Brazil",
+            "format": "jsonv2",
+            "limit": 1
+        }
+        # Identificação amigável exigida pela política do OpenStreetMap
+        headers = {"User-Agent": "ConsultaSecretariosSaude/1.0 (contato@exemplo.com)"}
+        
+        resposta = requests.get(url, params=parametros, headers=headers, timeout=5)
+        dados = resposta.json()
+        
+        if dados:
+            return float(dados[0]["lat"]), float(dados[0]["lon"])
+    except Exception:
+        pass
+    # Coordenadas padrão aproximadas da Paraíba caso a busca falhe temporariamente
+    return -7.1198, -34.8450
+
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
     st.header("🔍 Painel de Busca")
@@ -120,7 +141,6 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
     secretario_atual = df.loc[s_idx, 'Secretário']
     regiao_atual = df.loc[s_idx, 'Região de Saúde']
     
-    # Tratamento individual e seguro para exibição
     def obter_valor_valido(campo):
         val = df.loc[s_idx, campo]
         if pd.isna(val) or str(val).lower() == 'nan' or str(val).strip() == "":
@@ -135,7 +155,6 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
     txt_fund = obter_valor_valido("Fundo de Saúde")
     txt_cnpj = obter_valor_valido("CNPJ")
 
-    # --- GERADOR DE TEXTO PARA EXPORTAÇÃO ---
     texto_exportacao = f"""### 📍 FICHA INSTITUCIONAL — {municipio_atual.upper()}
     
 👤 **Secretário(a):** {secretario_atual}
@@ -191,31 +210,15 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
                 with st.popover("📋 Copiar Dados", use_container_width=True):
                     st.code(texto_exportacao, language="markdown")
             
-                    st.markdown(" ")
-                    st.markdown("🗺️ **Geolocalização Geográfica**")
+            st.markdown(" ")
+            st.markdown("🗺️ **Geolocalização Geográfica**")
             
-            # Força a limpeza e codificação correta do termo de busca
-            termo_mapa = f"{municipio_atual}, Paraiba, Brazil"
-            query_localidade = urllib.parse.quote(termo_mapa)
+            # --- MAPA SEGURO COM ST.MAP (NATIVO E LIVRE DE IFRAME) ---
+            lat, lon = buscar_coordenadas_municipio(municipio_atual)
+            df_mapa = pd.DataFrame({"lat": [lat], "lon": [lon]})
             
-            # Link absoluto completo com HTTPS forçado e sem concatenações truncadas
-            url_embed = f"https://google.com{query_localidade}&t=&z=13&ie=UTF8&iwloc=&output=embed"
-            
-            # HTML blindado com aspas triplas para evitar que o navegador junte o domínio da aplicação com o link
-            html_mapa = f"""
-            <iframe 
-                width="100%" 
-                height="250" 
-                frameborder="0" 
-                scrolling="no" 
-                marginheight="0" 
-                marginwidth="0" 
-                src="{url_embed}" 
-                style="border: 1px solid #ccc; border-radius:4px;">
-            </iframe>
-            """
-            
-            st.markdown(html_mapa, unsafe_allow_html=True)
+            # Renderiza o mapa integrado usando o Mapbox padrão nativo do Streamlit
+            st.map(df_mapa, size=40, color="#1E3A8A", zoom=11)
 
 else:
     st.markdown("---")
@@ -224,4 +227,3 @@ else:
 # --- RODAPÉ DISCRETO ---
 st.markdown("---")
 st.markdown("<p style='text-align:right; font-size:12px; color:#A3A3A3;'>Bartolomeu Lima - Corecon-ES 1541</p>", unsafe_allow_html=True)
-
