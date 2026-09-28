@@ -191,20 +191,31 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
                 with st.popover("📋 Copiar Dados", use_container_width=True):
                     st.code(texto_exportacao, language="markdown")
             
-            st.markdown(" ")
+                       st.markdown(" ")
             st.markdown("🗺️ **Geolocalização Geográfica**")
             
-            # --- URL CORRIGIDA: Usa rota limpa de busca do OpenStreetMap para evitar colagem de texto ---
-            query_localidade = urllib.parse.quote(f"{municipio_atual}, Paraiba, Brazil")
-            url_osm_corrigido = f"https://openstreetmap.org{query_localidade}"
+            # Força a limpeza e codificação correta do termo de busca
+            termo_mapa = f"{municipio_atual}, Paraiba, Brazil"
+            query_localidade = urllib.parse.quote(termo_mapa)
             
-            # Para exibição direta em iframe sem quebras de DNS
-            url_embed = f"https://google.com{query_localidade}&t=&z=12&ie=UTF8&iwloc=&output=embed"
+            # Link absoluto completo com HTTPS forçado e sem concatenações truncadas
+            url_embed = f"https://google.com{query_localidade}&t=&z=13&ie=UTF8&iwloc=&output=embed"
             
-            st.markdown(
-                f'<iframe width="100%" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="{url_embed}" style="border: 1px solid #ccc; border-radius:4px;"></iframe>', 
-                unsafe_allow_html=True
-            )
+            # HTML blindado com aspas triplas para evitar que o navegador junte o domínio da aplicação com o link
+            html_mapa = f"""
+            <iframe 
+                width="100%" 
+                height="250" 
+                frameborder="0" 
+                scrolling="no" 
+                marginheight="0" 
+                marginwidth="0" 
+                src="{url_embed}" 
+                style="border: 1px solid #ccc; border-radius:4px;">
+            </iframe>
+            """
+            
+            st.markdown(html_mapa, unsafe_allow_html=True)
 
 else:
     st.markdown("---")
