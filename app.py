@@ -127,9 +127,7 @@ with st.sidebar:
             
             lista_ordenada = ["-- Selecione o registro --"] + sorted(list(opcoes_secretarios.keys()))
             selecao = st.selectbox("Registros localizados:", lista_ordenada)
-            # --- FONTE---
-st.markdown("---")
-st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Cosems-PB</p>", unsafe_allow_html=True)
+           
             if selecao and selecao != "-- Selecione o registro --":
                 st.session_state["indice_secretario_consultado"] = opcoes_secretarios[selecao]
             else:
