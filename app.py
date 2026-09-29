@@ -105,10 +105,7 @@ def buscar_coordenadas_municipio(nome_municipio):
     # CASO TUDO FALHE: Retorna uma coordenada neutra central do estado da Paraíba (Perto de Soledade)
     # Isso evita cair sempre em João Pessoa e mostra visualmente que o ponto está no interior se for o caso
     return -7.0600, -36.3600
- # --- FONTE---
-st.markdown("---")
-st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Cosems-PB</p>", unsafe_allow_html=True)
-    busca_termo = st.text_input("Digite o Município ou Secretário:", value="")
+ 
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
     st.header("🔍 Painel de Busca")
