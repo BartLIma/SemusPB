@@ -103,7 +103,7 @@ def buscar_coordenadas_municipio(nome_municipio):
         pass
 
     # CASO TUDO FALHE: Retorna uma coordenada neutra central do estado da Paraíba (Perto de Soledade)
-       return -7.0600, -36.3600
+    return -7.0600, -36.3600
 
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
