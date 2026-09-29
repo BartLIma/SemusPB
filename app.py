@@ -112,7 +112,9 @@ with st.sidebar:
     st.write("Selecione:")
     
     busca_termo = st.text_input("Digite o Município ou Secretário:", value="")
-    
+     # --- FONTE---
+st.markdown("---")
+st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Cosems-PB</p>", unsafe_allow_html=True)
     if busca_termo.strip():
         termo = busca_termo.lower().strip()
         filtro = df["Município"].str.lower().str.contains(termo) | df["Secretário"].str.lower().str.contains(termo)
