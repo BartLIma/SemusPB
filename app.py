@@ -234,4 +234,4 @@ else:
 
 # --- RODAPÉ DISCRETO ---
 st.markdown("---")
-st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Autor: Bartolomeu Lima - Corecon-ES 1541, Fonte de Dados: Cosems-PB</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Autor: Bartolomeu Lima - Corecon-ES 1541,    Fonte de Dados: https://cosemspb.org/novos-secs/</p>", unsafe_allow_html=True)
