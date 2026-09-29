@@ -103,6 +103,7 @@ def buscar_coordenadas_municipio(nome_municipio):
         pass
 
     # CASO TUDO FALHE: Retorna uma coordenada neutra central do estado da Paraíba (Perto de Soledade)
+    # Isso evita cair sempre em João Pessoa e mostra visualmente que o ponto está no interior se for o caso
     return -7.0600, -36.3600
 
 # --- PAINEL LATERAL DE BUSCA ---
@@ -136,9 +137,7 @@ with st.sidebar:
             st.sidebar.warning("Nenhum registro localizado.")
     else:
         st.session_state["indice_secretario_consultado"] = None
-# --- LATERAL DISCRETO ---
-st.markdown("---")
-st.markdown("<p style='text-align:right; font-size:12px; color:#A3A3A3;'>Bartolomeu Lima - Corecon-ES 1541</p>", unsafe_allow_html=True)
+
 # --- ÁREA PRINCIPAL ---
 st.title("🏛️ Secretarias de Saúde da Paraíba")
 
@@ -219,7 +218,7 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
                     st.code(texto_exportacao, language="markdown")
             
             st.markdown(" ")
-            st.markdown("🗺️ **Geolocalização**")
+            st.markdown("🗺️ **Geolocalização Geográfica**")
             
             # --- RENDERIZAÇÃO DO PONTO EXATO DA CIDADE ---
             lat, lon = buscar_coordenadas_municipio(municipio_atual)
