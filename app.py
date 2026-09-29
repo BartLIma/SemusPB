@@ -127,7 +127,9 @@ with st.sidebar:
             
             lista_ordenada = ["-- Selecione o registro --"] + sorted(list(opcoes_secretarios.keys()))
             selecao = st.selectbox("Registros localizados:", lista_ordenada)
-            
+            # --- FONTE---
+st.markdown("---")
+st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Cosems-PB</p>", unsafe_allow_html=True)
             if selecao and selecao != "-- Selecione o registro --":
                 st.session_state["indice_secretario_consultado"] = opcoes_secretarios[selecao]
             else:
@@ -137,9 +139,9 @@ with st.sidebar:
             st.sidebar.warning("Nenhum registro localizado.")
     else:
         st.session_state["indice_secretario_consultado"] = None
-# --- RODAPÉ DISCRETO ---
+# --- MÉTODO DE GEOLOCALIZAÇÃO ---
 st.markdown("---")
-st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Bartolomeu Lima - Corecon-ES 1541</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Geolocalização automática</p>", unsafe_allow_html=True)
 # --- ÁREA PRINCIPAL ---
 st.title("🏛️ Secretarias de Saúde da Paraíba")
 
