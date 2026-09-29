@@ -179,7 +179,7 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
     
     with col_ficha:
         with st.container(border=True):
-            st.subheader(f"📍 Ficha Institucional — {municipio_atual}")
+            st.subheader(f"📍 Município — {municipio_atual}")
             st.markdown("---")
             
             f_col1, f_col2 = st.columns(2)
