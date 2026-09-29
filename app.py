@@ -218,7 +218,7 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
                     st.code(texto_exportacao, language="markdown")
             
             st.markdown(" ")
-            st.markdown("🗺️ **Geolocalização Geográfica**")
+            st.markdown("🗺️ **Geolocalização**")
             
             # --- RENDERIZAÇÃO DO PONTO EXATO DA CIDADE ---
             lat, lon = buscar_coordenadas_municipio(municipio_atual)
