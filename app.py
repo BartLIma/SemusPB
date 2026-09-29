@@ -139,7 +139,7 @@ with st.sidebar:
         st.session_state["indice_secretario_consultado"] = None
 
 # --- ÁREA PRINCIPAL ---
-st.title("🏛️ Sistema de Consulta — Secretarias de Saúde da Paraíba")
+st.title("🏛️ Secretarias de Saúde da Paraíba")
 
 if st.session_state["indice_secretario_consultado"] is not None and st.session_state["indice_secretario_consultado"] in df.index:
     s_idx = st.session_state["indice_secretario_consultado"]
@@ -162,7 +162,7 @@ if st.session_state["indice_secretario_consultado"] is not None and st.session_s
     txt_fund = obter_valor_valido("Fundo de Saúde")
     txt_cnpj = obter_valor_valido("CNPJ")
 
-    texto_exportacao = f"""### 📍 FICHA INSTITUCIONAL — {municipio_atual.upper()}
+    texto_exportacao = f"""### 📍 MUNICÍPIO: — {municipio_atual.upper()}
     
 👤 **Secretário(a):** {secretario_atual}
 🗺️ **Região de Saúde (CIR):** {regiao_atual}
