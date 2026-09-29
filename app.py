@@ -137,9 +137,9 @@ with st.sidebar:
             st.sidebar.warning("Nenhum registro localizado.")
     else:
         st.session_state["indice_secretario_consultado"] = None
-# --- RODAPÉ DISCRETO ---
+# --- MÉTODO DE BUSCA ---
 st.markdown("---")
-st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Bartolomeu Lima - Corecon-ES 1541</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Geolocalização Automática</p>", unsafe_allow_html=True)
 # --- ÁREA PRINCIPAL ---
 st.title("🏛️ Secretarias de Saúde da Paraíba")
 
