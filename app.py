@@ -105,12 +105,14 @@ def buscar_coordenadas_municipio(nome_municipio):
     # CASO TUDO FALHE: Retorna uma coordenada neutra central do estado da Paraíba (Perto de Soledade)
     # Isso evita cair sempre em João Pessoa e mostra visualmente que o ponto está no interior se for o caso
     return -7.0600, -36.3600
- 
+
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
     st.header("🔍 Painel de Busca")
     st.write("Selecione:")
-        
+    
+    busca_termo = st.text_input("Digite o Município ou Secretário:", value="")
+    
     if busca_termo.strip():
         termo = busca_termo.lower().strip()
         filtro = df["Município"].str.lower().str.contains(termo) | df["Secretário"].str.lower().str.contains(termo)
@@ -125,7 +127,9 @@ with st.sidebar:
             
             lista_ordenada = ["-- Selecione o registro --"] + sorted(list(opcoes_secretarios.keys()))
             selecao = st.selectbox("Registros localizados:", lista_ordenada)
-           
+            # --- FONTE---
+st.markdown("---")
+st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Cosems-PB</p>", unsafe_allow_html=True)
             if selecao and selecao != "-- Selecione o registro --":
                 st.session_state["indice_secretario_consultado"] = opcoes_secretarios[selecao]
             else:
