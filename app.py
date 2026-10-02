@@ -109,7 +109,7 @@ def buscar_coordenadas_municipio(nome_municipio):
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
     st.header("🔍 Painel de Busca")
-    st.write("Versão 02/10/2026")
+    st.write("Versão: 02/10/2026")
     st.write("Selecione:")
     
     busca_termo = st.text_input("Digite o Município ou Secretário:", value="")
@@ -235,4 +235,4 @@ else:
 
 # --- RODAPÉ DISCRETO ---
 st.markdown("---")
-st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Autor: Bartolomeu Lima - Corecon-ES 1541.    Fonte de Dados: https://cosemspb.org/novos-secs/. Atualizado em 10/09/2026</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:left; font-size:12px; color:#A3A3A3;'>Autor: Bartolomeu Lima - Corecon-ES 1541.    Fonte de Dados: https://cosemspb.org/novos-secs/</p>", unsafe_allow_html=True)
