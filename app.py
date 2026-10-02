@@ -108,7 +108,8 @@ def buscar_coordenadas_municipio(nome_municipio):
 
 # --- PAINEL LATERAL DE BUSCA ---
 with st.sidebar:
-    st.header("🔍 Painel de Busca. Versão 02/10/2026")
+    st.header("🔍 Painel de Busca")
+    st.write("Versão 02/10/2026")
     st.write("Selecione:")
     
     busca_termo = st.text_input("Digite o Município ou Secretário:", value="")
